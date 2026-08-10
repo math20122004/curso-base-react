@@ -1,21 +1,47 @@
 import { useState } from "react"
+import { InputAdd } from "./components/InputAdd"
 
 export function App() {
-  const [count, setCount] = useState(0)
-  const [hide, setHide] = useState(false)
+  const [list, setList] = useState([
+    { id: '1', label: 'Fazer Café', complete: false },
+    { id: '2', label: 'Fazer Almoço', complete: false },
+    { id: '3', label: 'Fazer Janta', complete: false }
+  ])
+
+  const handleAdd = (value: string) => {
+    setList([
+      ...list,
+      {
+        id: (list.length + 1).toString(),
+        label: value,
+        complete: false
+      }
+    ])
+  }
 
   return (
     <div>
+      <InputAdd onAdd={(value) => {handleAdd(value)}} />
 
-      {hide && <p>TESTE</p>}
-      {!hide && <p>TESTE 2</p>}
+      <ol>
+        {list.map((listItem => (
+          <li key={listItem.id}>
+            {listItem.complete ? 'COMPLETO' : ''}
 
-      <button onClick={() => setCount(count + 1)}>
-        {count}
-      </button>
-      <button onClick={() => setHide(!hide)}>
-        Toggle
-      </button>
+            {listItem.label}
+            <button
+              onClick={() => setList(list.map(item => ({ ...item, complete: item.id === listItem.id ? true : item.complete })))}
+            >
+              Concluir
+            </button>
+            <button
+              onClick={() => setList(list.filter(item => item.id !== listItem.id))}
+            >
+              Remover
+            </button>
+          </li>
+        )))}
+      </ol>
     </div>
   )
 }
